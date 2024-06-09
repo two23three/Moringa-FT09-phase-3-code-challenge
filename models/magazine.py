@@ -25,7 +25,7 @@ class Magazine:
         if isinstance(name, str) and 2 <= len(name) <= 16:
             self._name = name
         else:
-            raise TypeError("MAGAZINE name must be of type str and SHOULD BE BETWEEN 2 AND 16 CHARACTERS")
+            raise TypeError("mag name must be of type str and between 2 and 16 characters")
 
     @property
     def category(self):
@@ -36,7 +36,7 @@ class Magazine:
         if isinstance(category, str) and len(category) > 0:
             self._category = category
         else:
-            raise TypeError("category must be of type str and longer than 0 characters")
+            raise TypeError("category must be of type str and longer than zero characters")
 
     @property
     def articles(self):
@@ -47,9 +47,9 @@ class Magazine:
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('''
-            SELECT a.id, a.title, a.content, a.author_id, a.magazine_id
-            FROM articles a
-            WHERE a.magazine_id = ?
+            SELECT articles.id, articles.title, articles.content, articles.author_id, articles.magazine_id
+            FROM articles 
+            WHERE articles.magazine_id = ?
         ''', (self.id,))
         article_info = cursor.fetchall()
         conn.close()
@@ -66,12 +66,13 @@ class Magazine:
         from models.author import Author
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute('''
-            SELECT DISTINCT au.id, au.name
-            FROM authors au
-            JOIN articles a ON au.id = a.author_id
-            WHERE a.magazine_id = ?
-        ''', (self.id,))
+        sql = '''
+            SELECT DISTINCT authors.id, authors.name
+            FROM authors 
+            JOIN articles  ON authors.id = articles.author_id
+            WHERE articles.magazine_id = ?
+        '''
+        cursor.execute(sql, (self.id,))
         author_info = cursor.fetchall()
         conn.close()
         if author_info:
@@ -94,3 +95,7 @@ class Magazine:
         major_contributors = ";".join([contributer.name for contributer in self.contributing_authors()]) if self.contributing_authors() else "None"
         article_titles = ";".join([article.title for article in self.articles]) if self.articles else "None"
         return f'MAGAZINE:{self.name} ||ID: {self.id} || ARTIC:{article_titles}|| CONTR:{contributer_titles} || MAJOR CONTR:{major_contributors}'
+
+
+
+#test contribuong authors

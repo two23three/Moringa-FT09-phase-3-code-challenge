@@ -41,6 +41,18 @@ class Article:
     def title(self):
         return self._title
 
+    @staticmethod
+    def get_magazine_information_by_id(magazine_id):
+        """
+        Retrieves information about a magazine from the database based on their ID.
+        """
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM magazines WHERE id = ?', (magazine_id,))
+        magazine_information = cursor.fetchone()
+        conn.close()
+        return magazine_information
+
     @title.setter
     def title(self, title):
         if not hasattr(self, '_title'):
@@ -71,22 +83,11 @@ class Article:
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM authors WHERE id = ?', (author_id,))
-        author_info = cursor.fetchone()
+        author_information = cursor.fetchone()
         conn.close()
-        return author_info
+        return author_information
 
 
-    @staticmethod
-    def get_magazine_information_by_id(magazine_id):
-        """
-        Retrieves information about a magazine from the database based on their ID.
-        """
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM magazines WHERE id = ?', (magazine_id,))
-        magazine_info = cursor.fetchone()
-        conn.close()
-        return magazine_info
 
     def __repr__(self):
       

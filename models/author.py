@@ -24,9 +24,9 @@ class Author:
         if not isinstance(name, str):
             raise TypeError("name must be of type str")
         if len(name) == 0:
-            raise ValueError("name must be longer than 0 characters")
+            raise ValueError("name must be longer than zero characters")
         if hasattr(self, '_name'):
-            raise AttributeError("name cannot be changed once set")
+            raise AttributeError("name cannot be changed once given")
         self._name = name
 
     @property
@@ -38,10 +38,10 @@ class Author:
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('''
-            SELECT a.id, a.title, a.content, a.author_id, a.magazine_id
-            FROM articles a
-            JOIN authors au ON a.author_id = au.id
-            WHERE au.id = ?
+            SELECT articles.id, articles.title, articles.content, articles.author_id, articles.magazine_id
+            FROM articles 
+            INNER JOIN authors  ON articles.author_id = authors.id
+            WHERE authors.id = ?
         ''', (self.id,))
         article_info = cursor.fetchall()
         conn.close()
@@ -59,10 +59,10 @@ class Author:
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('''
-            SELECT DISTINCT m.id, m.name, m.category
-            FROM magazines m
-            JOIN articles a ON m.id = a.magazine_id
-            WHERE a.author_id = ?
+            SELECT DISTINCT magazines.id, magazines.name, magazines.category
+            FROM magazines 
+            INNER JOIN articles ON magazines.id = articles.magazine_id
+            WHERE articles.author_id = ?
         ''', (self.id,))
         magazine_info = cursor.fetchall()
         conn.close()
